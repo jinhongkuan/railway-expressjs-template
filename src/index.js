@@ -54,7 +54,6 @@ app.use((req, res, next) => {
 // other methods are available, like res.render() to render a template, or res.redirect() to redirect to another url
 // see the express docs for more info: https://expressjs.com/en/api.html#res
 app.get("/", (req, res) => {
-  fetch();
   res.send("Choo Choo! Welcome to your Express app 🚅");
 });
 
