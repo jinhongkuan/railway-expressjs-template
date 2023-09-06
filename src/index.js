@@ -1,4 +1,10 @@
 import express from "express";
+import bodyParser from "body-parser";
+import pkg from "pg";
+import dotenv from "dotenv";
+dotenv.config();
+
+const { Pool } = pkg;
 const app = express();
 
 // check out the example code in the `./routes/example.js` file.
@@ -6,6 +12,7 @@ const app = express();
 // which makes it easier to manage your code as it grows.
 import { ExampleRouter } from "./routes/router_example.js";
 app.use("/", ExampleRouter);
+app.use(bodyParser.json());
 
 // Middleware is a function that runs on every request that is sent to your app.
 // It can be used to modify the request or response objects, or to run some code
@@ -47,11 +54,27 @@ app.use((req, res, next) => {
 // other methods are available, like res.render() to render a template, or res.redirect() to redirect to another url
 // see the express docs for more info: https://expressjs.com/en/api.html#res
 app.get("/", (req, res) => {
+  fetch();
   res.send("Choo Choo! Welcome to your Express app 🚅");
 });
 
 app.get("/json", (req, res) => {
   res.json({ "Choo Choo": "Welcome to your Express app 🚅" });
+});
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false,
+  },
+});
+app.get("/data", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT * FROM User");
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // You can declare a POST route using the syntax below:
